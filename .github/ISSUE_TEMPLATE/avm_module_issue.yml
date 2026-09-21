@@ -189,6 +189,7 @@ body:
         - "avm/res/management/management-group"
         - "avm/res/management/service-group"
         - "avm/res/maps/account"
+        - "avm/res/mission/community"
         - "avm/res/net-app/net-app-account"
         - "avm/res/network/application-gateway"
         - "avm/res/network/application-gateway-web-application-firewall-policy"
