@@ -58,6 +58,7 @@ module community 'br/public:avm/res/mission/community:<version>' = {
     name: 'mcmin001'
     // Non-required parameters
     location: '<location>'
+    policyOverride: 'None'
   }
 }
 ```
@@ -81,6 +82,9 @@ module community 'br/public:avm/res/mission/community:<version>' = {
     // Non-required parameters
     "location": {
       "value": "<location>"
+    },
+    "policyOverride": {
+      "value": "None"
     }
   }
 }
@@ -100,6 +104,7 @@ using 'br/public:avm/res/mission/community:<version>'
 param name = 'mcmin001'
 // Non-required parameters
 param location = '<location>'
+param policyOverride = 'None'
 ```
 
 </details>
@@ -178,12 +183,6 @@ module community 'br/public:avm/res/mission/community:<version>' = {
     maintenanceModeConfiguration: {
       justification: 'Off'
       mode: 'Off'
-    }
-    managedIdentities: {
-      systemAssigned: true
-      userAssignedResourceIds: [
-        '<managedIdentityResourceId>'
-      ]
     }
     policyOverride: 'None'
     roleAssignments: [
@@ -301,14 +300,6 @@ module community 'br/public:avm/res/mission/community:<version>' = {
         "mode": "Off"
       }
     },
-    "managedIdentities": {
-      "value": {
-        "systemAssigned": true,
-        "userAssignedResourceIds": [
-          "<managedIdentityResourceId>"
-        ]
-      }
-    },
     "policyOverride": {
       "value": "None"
     },
@@ -407,12 +398,6 @@ param maintenanceModeConfiguration = {
   justification: 'Off'
   mode: 'Off'
 }
-param managedIdentities = {
-  systemAssigned: true
-  userAssignedResourceIds: [
-    '<managedIdentityResourceId>'
-  ]
-}
 param policyOverride = 'None'
 param roleAssignments = [
   {
@@ -480,6 +465,7 @@ module community 'br/public:avm/res/mission/community:<version>' = {
         }
       ]
     }
+    policyOverride: 'None'
     roleAssignments: [
       {
         principalId: '<principalId>'
@@ -548,6 +534,9 @@ module community 'br/public:avm/res/mission/community:<version>' = {
         ]
       }
     },
+    "policyOverride": {
+      "value": "None"
+    },
     "roleAssignments": {
       "value": [
         {
@@ -608,6 +597,7 @@ param monitoringSettings = {
     }
   ]
 }
+param policyOverride = 'None'
 param roleAssignments = [
   {
     principalId: '<principalId>'
