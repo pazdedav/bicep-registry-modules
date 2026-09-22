@@ -57,6 +57,7 @@ module community 'br/public:avm/res/mission/community:<version>' = {
     // Required parameters
     name: 'mcmin001'
     // Non-required parameters
+    addressSpace: '10.0.0.0/16'
     location: '<location>'
     policyOverride: 'None'
   }
@@ -80,6 +81,9 @@ module community 'br/public:avm/res/mission/community:<version>' = {
       "value": "mcmin001"
     },
     // Non-required parameters
+    "addressSpace": {
+      "value": "10.0.0.0/16"
+    },
     "location": {
       "value": "<location>"
     },
@@ -103,6 +107,7 @@ using 'br/public:avm/res/mission/community:<version>'
 // Required parameters
 param name = 'mcmin001'
 // Non-required parameters
+param addressSpace = '10.0.0.0/16'
 param location = '<location>'
 param policyOverride = 'None'
 ```
