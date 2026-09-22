@@ -60,12 +60,6 @@ module testDeployment '../../../main.bicep' = [
         kind: 'CanNotDelete'
         name: 'lock'
       }
-      managedIdentities: {
-        systemAssigned: true
-        userAssignedResourceIds: [
-          nestedDependencies.outputs.managedIdentityResourceId
-        ]
-      }
       roleAssignments: [
         {
           roleDefinitionIdOrName: 'Reader'
