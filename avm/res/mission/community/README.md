@@ -443,6 +443,7 @@ module community 'br/public:avm/res/mission/community:<version>' = {
     // Required parameters
     name: 'mcwaf001'
     // Non-required parameters
+    addressSpace: '10.0.0.0/16'
     diagnosticSettings: [
       {
         eventHubAuthorizationRuleResourceId: '<eventHubAuthorizationRuleResourceId>'
@@ -504,6 +505,9 @@ module community 'br/public:avm/res/mission/community:<version>' = {
       "value": "mcwaf001"
     },
     // Non-required parameters
+    "addressSpace": {
+      "value": "10.0.0.0/16"
+    },
     "diagnosticSettings": {
       "value": [
         {
@@ -575,6 +579,7 @@ using 'br/public:avm/res/mission/community:<version>'
 // Required parameters
 param name = 'mcwaf001'
 // Non-required parameters
+param addressSpace = '10.0.0.0/16'
 param diagnosticSettings = [
   {
     eventHubAuthorizationRuleResourceId: '<eventHubAuthorizationRuleResourceId>'
