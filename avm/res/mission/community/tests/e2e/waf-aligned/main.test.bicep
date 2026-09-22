@@ -65,6 +65,7 @@ module testDeployment '../../../main.bicep' = [
       name: '${namePrefix}${serviceShort}001'
       location: resourceLocation
       policyOverride: 'None'
+      addressSpace: '10.0.0.0/16'
       tags: {
         'hidden-title': 'This is visible in the resource name'
         Environment: 'Non-Prod'
