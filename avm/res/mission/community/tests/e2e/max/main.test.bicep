@@ -76,9 +76,7 @@ module testDeployment '../../../main.bicep' = [
         }
       ]
       addressSpace: '10.0.0.0/16'
-      addressSpaces: [
-        '10.0.0.0/16'
-      ]
+      addressSpaces: []
       dnsServers: [
         '10.0.0.4'
         '10.0.0.5'

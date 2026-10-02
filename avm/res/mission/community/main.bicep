@@ -62,10 +62,6 @@ import { roleAssignmentType } from 'br/public:avm/utl/types/avm-common-types:0.7
 @description('Optional. Array of Azure RBAC role assignments to create on this resource. Not to be confused with `communityRoleAssignments`, which manages community-scoped access grants.')
 param roleAssignments roleAssignmentType[]?
 
-import { diagnosticSettingFullType } from 'br/public:avm/utl/types/avm-common-types:0.7.0'
-@description('Optional. The diagnostic settings of the service.')
-param diagnosticSettings diagnosticSettingFullType[]?
-
 @description('Optional. Tags of the resource.')
 param tags resourceInput<'Microsoft.Mission/communities@2026-03-01-preview'>.tags?
 
@@ -161,40 +157,6 @@ resource community_lock 'Microsoft.Authorization/locks@2020-05-01' = if (!empty(
   }
   scope: community
 }
-
-#disable-next-line use-recent-api-versions
-resource community_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-  for (diagnosticSetting, index) in (diagnosticSettings ?? []): {
-    name: diagnosticSetting.?name ?? '${name}-diagnosticSettings'
-    properties: {
-      storageAccountId: diagnosticSetting.?storageAccountResourceId
-      workspaceId: diagnosticSetting.?workspaceResourceId
-      eventHubAuthorizationRuleId: diagnosticSetting.?eventHubAuthorizationRuleResourceId
-      eventHubName: diagnosticSetting.?eventHubName
-      metrics: [
-        for group in (diagnosticSetting.?metricCategories ?? (empty(diagnosticSetting.?logCategoriesAndGroups)
-          ? [{ category: 'AllMetrics' }]
-          : [])): {
-          category: group.category
-          enabled: group.?enabled ?? true
-          timeGrain: null
-        }
-      ]
-      logs: [
-        for group in (diagnosticSetting.?logCategoriesAndGroups ?? (empty(diagnosticSetting.?metricCategories)
-          ? [{ categoryGroup: 'allLogs' }]
-          : [])): {
-          categoryGroup: group.?categoryGroup
-          category: group.?category
-          enabled: group.?enabled ?? true
-        }
-      ]
-      marketplacePartnerId: diagnosticSetting.?marketplacePartnerResourceId
-      logAnalyticsDestinationType: diagnosticSetting.?logAnalyticsDestinationType
-    }
-    scope: community
-  }
-]
 
 resource community_roleAssignments 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
   for (roleAssignment, index) in (formattedRoleAssignments ?? []): {

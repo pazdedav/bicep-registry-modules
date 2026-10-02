@@ -25,7 +25,6 @@ For examples, please refer to the [Usage Examples](#usage-examples) section.
 | :-- | :-- | :-- |
 | `Microsoft.Authorization/locks` | 2020-05-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.authorization_locks.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Authorization/2020-05-01/locks)</li></ul> |
 | `Microsoft.Authorization/roleAssignments` | 2022-04-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.authorization_roleassignments.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Authorization/2022-04-01/roleAssignments)</li></ul> |
-| `Microsoft.Insights/diagnosticSettings` | 2021-05-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.insights_diagnosticsettings.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Insights/2021-05-01-preview/diagnosticSettings)</li></ul> |
 | `Microsoft.Mission/communities` | 2026-03-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.mission_communities.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Mission/2026-03-01-preview/communities)</li></ul> |
 
 ## Usage examples
@@ -133,9 +132,7 @@ module community 'br/public:avm/res/mission/community:<version>' = {
     name: 'mcmax001'
     // Non-required parameters
     addressSpace: '10.0.0.0/16'
-    addressSpaces: [
-      '10.0.0.0/16'
-    ]
+    addressSpaces: []
     approvalSettings: {
       connectionCreation: {
         approvalPolicy: 'Required'
@@ -232,9 +229,7 @@ module community 'br/public:avm/res/mission/community:<version>' = {
       "value": "10.0.0.0/16"
     },
     "addressSpaces": {
-      "value": [
-        "10.0.0.0/16"
-      ]
+      "value": []
     },
     "approvalSettings": {
       "value": {
@@ -347,9 +342,7 @@ using 'br/public:avm/res/mission/community:<version>'
 param name = 'mcmax001'
 // Non-required parameters
 param addressSpace = '10.0.0.0/16'
-param addressSpaces = [
-  '10.0.0.0/16'
-]
+param addressSpaces = []
 param approvalSettings = {
   connectionCreation: {
     approvalPolicy: 'Required'
@@ -444,20 +437,6 @@ module community 'br/public:avm/res/mission/community:<version>' = {
     name: 'mcwaf001'
     // Non-required parameters
     addressSpace: '10.0.0.0/16'
-    diagnosticSettings: [
-      {
-        eventHubAuthorizationRuleResourceId: '<eventHubAuthorizationRuleResourceId>'
-        eventHubName: '<eventHubName>'
-        metricCategories: [
-          {
-            category: 'AllMetrics'
-          }
-        ]
-        name: 'customSetting'
-        storageAccountResourceId: '<storageAccountResourceId>'
-        workspaceResourceId: '<workspaceResourceId>'
-      }
-    ]
     location: '<location>'
     lock: {
       kind: 'CanNotDelete'
@@ -507,22 +486,6 @@ module community 'br/public:avm/res/mission/community:<version>' = {
     // Non-required parameters
     "addressSpace": {
       "value": "10.0.0.0/16"
-    },
-    "diagnosticSettings": {
-      "value": [
-        {
-          "eventHubAuthorizationRuleResourceId": "<eventHubAuthorizationRuleResourceId>",
-          "eventHubName": "<eventHubName>",
-          "metricCategories": [
-            {
-              "category": "AllMetrics"
-            }
-          ],
-          "name": "customSetting",
-          "storageAccountResourceId": "<storageAccountResourceId>",
-          "workspaceResourceId": "<workspaceResourceId>"
-        }
-      ]
     },
     "location": {
       "value": "<location>"
@@ -580,20 +543,6 @@ using 'br/public:avm/res/mission/community:<version>'
 param name = 'mcwaf001'
 // Non-required parameters
 param addressSpace = '10.0.0.0/16'
-param diagnosticSettings = [
-  {
-    eventHubAuthorizationRuleResourceId: '<eventHubAuthorizationRuleResourceId>'
-    eventHubName: '<eventHubName>'
-    metricCategories: [
-      {
-        category: 'AllMetrics'
-      }
-    ]
-    name: 'customSetting'
-    storageAccountResourceId: '<storageAccountResourceId>'
-    workspaceResourceId: '<workspaceResourceId>'
-  }
-]
 param location = '<location>'
 param lock = {
   kind: 'CanNotDelete'
@@ -641,7 +590,6 @@ param tags = {
 | [`addressSpaces`](#parameter-addressspaces) | array | THIS IS A PARAMETER USED FOR A PREVIEW SERVICE/FEATURE, MICROSOFT MAY NOT PROVIDE SUPPORT FOR THIS, PLEASE CHECK THE PRODUCT DOCS FOR CLARIFICATION. List of address spaces of the community. |
 | [`approvalSettings`](#parameter-approvalsettings) | object | THIS IS A PARAMETER USED FOR A PREVIEW SERVICE/FEATURE, MICROSOFT MAY NOT PROVIDE SUPPORT FOR THIS, PLEASE CHECK THE PRODUCT DOCS FOR CLARIFICATION. Granular approval requirements for various actions on the community's resources. |
 | [`communityRoleAssignments`](#parameter-communityroleassignments) | array | THIS IS A PARAMETER USED FOR A PREVIEW SERVICE/FEATURE, MICROSOFT MAY NOT PROVIDE SUPPORT FOR THIS, PLEASE CHECK THE PRODUCT DOCS FOR CLARIFICATION. Community-scoped role assignments. Not to be confused with the `roleAssignments` parameter, which manages Azure RBAC role assignments on this resource. |
-| [`diagnosticSettings`](#parameter-diagnosticsettings) | array | The diagnostic settings of the service. |
 | [`dnsServers`](#parameter-dnsservers) | array | THIS IS A PARAMETER USED FOR A PREVIEW SERVICE/FEATURE, MICROSOFT MAY NOT PROVIDE SUPPORT FOR THIS, PLEASE CHECK THE PRODUCT DOCS FOR CLARIFICATION. DNS servers used by the community. |
 | [`enableTelemetry`](#parameter-enabletelemetry) | bool | Enable/Disable usage telemetry for module. |
 | [`firewallSku`](#parameter-firewallsku) | string | THIS IS A PARAMETER USED FOR A PREVIEW SERVICE/FEATURE, MICROSOFT MAY NOT PROVIDE SUPPORT FOR THIS, PLEASE CHECK THE PRODUCT DOCS FOR CLARIFICATION. SKU of the community's Azure Firewall. |
@@ -1156,152 +1104,6 @@ The type of the object id. Users, groups, and service principals are allowed.
     'User'
   ]
   ```
-
-### Parameter: `diagnosticSettings`
-
-The diagnostic settings of the service.
-
-- Required: No
-- Type: array
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`eventHubAuthorizationRuleResourceId`](#parameter-diagnosticsettingseventhubauthorizationruleresourceid) | string | Resource ID of the diagnostic event hub authorization rule for the Event Hubs namespace in which the event hub should be created or streamed to. |
-| [`eventHubName`](#parameter-diagnosticsettingseventhubname) | string | Name of the diagnostic event hub within the namespace to which logs are streamed. Without this, an event hub is created for each log category. For security reasons, it is recommended to set diagnostic settings to send data to either storage account, log analytics workspace or event hub. |
-| [`logAnalyticsDestinationType`](#parameter-diagnosticsettingsloganalyticsdestinationtype) | string | A string indicating whether the export to Log Analytics should use the default destination type, i.e. AzureDiagnostics, or use a destination type. |
-| [`logCategoriesAndGroups`](#parameter-diagnosticsettingslogcategoriesandgroups) | array | The name of logs that will be streamed. "allLogs" includes all possible logs for the resource. Set to `[]` to disable log collection. |
-| [`marketplacePartnerResourceId`](#parameter-diagnosticsettingsmarketplacepartnerresourceid) | string | The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic Logs. |
-| [`metricCategories`](#parameter-diagnosticsettingsmetriccategories) | array | The name of metrics that will be streamed. "allMetrics" includes all possible metrics for the resource. Set to `[]` to disable metric collection. |
-| [`name`](#parameter-diagnosticsettingsname) | string | The name of the diagnostic setting. |
-| [`storageAccountResourceId`](#parameter-diagnosticsettingsstorageaccountresourceid) | string | Resource ID of the diagnostic storage account. For security reasons, it is recommended to set diagnostic settings to send data to either storage account, log analytics workspace or event hub. |
-| [`workspaceResourceId`](#parameter-diagnosticsettingsworkspaceresourceid) | string | Resource ID of the diagnostic log analytics workspace. For security reasons, it is recommended to set diagnostic settings to send data to either storage account, log analytics workspace or event hub. |
-
-### Parameter: `diagnosticSettings.eventHubAuthorizationRuleResourceId`
-
-Resource ID of the diagnostic event hub authorization rule for the Event Hubs namespace in which the event hub should be created or streamed to.
-
-- Required: No
-- Type: string
-
-### Parameter: `diagnosticSettings.eventHubName`
-
-Name of the diagnostic event hub within the namespace to which logs are streamed. Without this, an event hub is created for each log category. For security reasons, it is recommended to set diagnostic settings to send data to either storage account, log analytics workspace or event hub.
-
-- Required: No
-- Type: string
-
-### Parameter: `diagnosticSettings.logAnalyticsDestinationType`
-
-A string indicating whether the export to Log Analytics should use the default destination type, i.e. AzureDiagnostics, or use a destination type.
-
-- Required: No
-- Type: string
-- Allowed:
-  ```Bicep
-  [
-    'AzureDiagnostics'
-    'Dedicated'
-  ]
-  ```
-
-### Parameter: `diagnosticSettings.logCategoriesAndGroups`
-
-The name of logs that will be streamed. "allLogs" includes all possible logs for the resource. Set to `[]` to disable log collection.
-
-- Required: No
-- Type: array
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`category`](#parameter-diagnosticsettingslogcategoriesandgroupscategory) | string | Name of a Diagnostic Log category for a resource type this setting is applied to. Set the specific logs to collect here. |
-| [`categoryGroup`](#parameter-diagnosticsettingslogcategoriesandgroupscategorygroup) | string | Name of a Diagnostic Log category group for a resource type this setting is applied to. Set to `allLogs` to collect all logs. |
-| [`enabled`](#parameter-diagnosticsettingslogcategoriesandgroupsenabled) | bool | Enable or disable the category explicitly. Default is `true`. |
-
-### Parameter: `diagnosticSettings.logCategoriesAndGroups.category`
-
-Name of a Diagnostic Log category for a resource type this setting is applied to. Set the specific logs to collect here.
-
-- Required: No
-- Type: string
-
-### Parameter: `diagnosticSettings.logCategoriesAndGroups.categoryGroup`
-
-Name of a Diagnostic Log category group for a resource type this setting is applied to. Set to `allLogs` to collect all logs.
-
-- Required: No
-- Type: string
-
-### Parameter: `diagnosticSettings.logCategoriesAndGroups.enabled`
-
-Enable or disable the category explicitly. Default is `true`.
-
-- Required: No
-- Type: bool
-
-### Parameter: `diagnosticSettings.marketplacePartnerResourceId`
-
-The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic Logs.
-
-- Required: No
-- Type: string
-
-### Parameter: `diagnosticSettings.metricCategories`
-
-The name of metrics that will be streamed. "allMetrics" includes all possible metrics for the resource. Set to `[]` to disable metric collection.
-
-- Required: No
-- Type: array
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`category`](#parameter-diagnosticsettingsmetriccategoriescategory) | string | Name of a Diagnostic Metric category for a resource type this setting is applied to. Set to `AllMetrics` to collect all metrics. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`enabled`](#parameter-diagnosticsettingsmetriccategoriesenabled) | bool | Enable or disable the category explicitly. Default is `true`. |
-
-### Parameter: `diagnosticSettings.metricCategories.category`
-
-Name of a Diagnostic Metric category for a resource type this setting is applied to. Set to `AllMetrics` to collect all metrics.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `diagnosticSettings.metricCategories.enabled`
-
-Enable or disable the category explicitly. Default is `true`.
-
-- Required: No
-- Type: bool
-
-### Parameter: `diagnosticSettings.name`
-
-The name of the diagnostic setting.
-
-- Required: No
-- Type: string
-
-### Parameter: `diagnosticSettings.storageAccountResourceId`
-
-Resource ID of the diagnostic storage account. For security reasons, it is recommended to set diagnostic settings to send data to either storage account, log analytics workspace or event hub.
-
-- Required: No
-- Type: string
-
-### Parameter: `diagnosticSettings.workspaceResourceId`
-
-Resource ID of the diagnostic log analytics workspace. For security reasons, it is recommended to set diagnostic settings to send data to either storage account, log analytics workspace or event hub.
-
-- Required: No
-- Type: string
 
 ### Parameter: `dnsServers`
 
