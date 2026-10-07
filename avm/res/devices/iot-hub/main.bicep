@@ -154,9 +154,11 @@ var formattedRoleAssignments = [
 // Dependencies //
 // ============ //
 
+var telemetryIdPrefix = loadJsonContent('metadata.json', 'telemetryIdPrefix')
+
 #disable-next-line no-deployments-resources
 resource avmTelemetry 'Microsoft.Resources/deployments@2025-04-01' = if (enableTelemetry) {
-  name: '46d3xbcp.res.devices-iothub.${replace('-..--..-', '.', '-')}.${substring(uniqueString(deployment().name, location), 0, 4)}'
+  name: '${telemetryIdPrefix}.${replace('-..--..-', '.', '-')}.${substring(uniqueString(deployment().name, location), 0, 4)}'
   properties: {
     mode: 'Incremental'
     template: {
@@ -206,7 +208,7 @@ resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
   }
 }
 
-module consumerGroupsModule 'consumergroup/main.bicep' = [
+module consumerGroupsModule 'event-hub-endpoint/consumergroup/main.bicep' = [
   for (consumerGroup, index) in (consumerGroups ?? []): {
     name: '${deployment().name}-ConsumerGroup-${index}'
     params: {
@@ -261,6 +263,7 @@ resource iothub_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-0
   }
 ]
 
+@batchSize(1)
 module iothub_privateEndpoints 'br/public:avm/res/network/private-endpoint:0.12.1' = [
   for (privateEndpoint, index) in (privateEndpoints ?? []): {
     name: '${uniqueString(deployment().name, location)}-iothub-PrivateEndpoint-${index}'

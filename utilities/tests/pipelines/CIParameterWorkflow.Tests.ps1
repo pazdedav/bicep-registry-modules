@@ -6,11 +6,13 @@ param(
 Describe 'CI parameter workflow integration' {
 
     BeforeAll {
+        . (Join-Path $repoRootPath 'utilities' 'pipelines' 'e2eValidation' 'resourceDeployment' 'Test-TemplateDeploymentWithRetry.ps1')
         $workflows = @{}
         foreach ($workflowName in @('avm.template.module', 'avm.template.module.preview', 'avm.template.module.publish')) {
             $workflowPath = Join-Path $repoRootPath '.github' 'workflows' "$workflowName.yml"
             $workflows[$workflowName] = ConvertFrom-Yaml -Yaml (Get-Content -Path $workflowPath -Raw)
         }
+        $deploymentWorkflow = ConvertFrom-Yaml -Yaml (Get-Content -Path (Join-Path $repoRootPath '.github' 'workflows' 'avm.template.module.deployment.yml') -Raw)
         $actionPath = Join-Path $repoRootPath '.github' 'actions' 'templates' 'avm-validateModuleDeployment' 'action.yml'
         $action = ConvertFrom-Yaml -Yaml (Get-Content -Path $actionPath -Raw)
         $environmentNames = @('GITHUB_WORKSPACE', 'GITHUB_OUTPUT', 'AVM_CI_VARIABLES', 'AVM_CI_SECRETS', 'CI_KEY_VAULT_NAME')
@@ -29,7 +31,8 @@ Describe 'CI parameter workflow integration' {
             param(
                 [string] $TemplateFilePath, [string] $DeploymentMetadataLocation,
                 [string] $SubscriptionId, [string] $ManagementGroupId,
-                [string] $RepoRoot, [hashtable] $AdditionalParameters, [bool] $DoNotThrow
+                [string] $RepoRoot, [hashtable] $AdditionalParameters, [bool] $DoNotThrow,
+                [int] $RetryLimit, [int] $AttemptNumber
             )
             throw 'Unexpected deployment.'
         }
@@ -47,7 +50,10 @@ Describe 'CI parameter workflow integration' {
             $script = $script.Replace('${{ inputs.deploymentMetadataLocation }}', 'westeurope')
             $script = $script.Replace('${{ inputs.managementGroupId }}', '')
             $script = $script.Replace('${{ steps.get-test-subscription.outputs.subscriptionId }}', '11111111-1111-1111-1111-111111111111')
-            $script = $script.Replace('${{ steps.get-resource-location.outputs.resourceLocation }}', 'westus')
+            $script = $script.Replace('${{ inputs.modulePath }}', 'avm/res/retry-test/widget')
+            $script = $script.Replace('${{ inputs.customLocation }}', '')
+            $script = $script.Replace('${{ steps.replace-tokens.outputs.resourceLocation }}', '')
+            $script = $script.Replace('${{ inputs.removeDeployment }}', 'true')
             return [scriptblock]::Create($script)
         }
     }
@@ -66,6 +72,7 @@ Describe 'CI parameter workflow integration' {
 
         $templatePath = Join-Path $TestDrive 'template.json'
         @{
+            '$schema' = 'https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#'
             parameters = @{
                 adminMembersSecret = @{ type = 'secureString' }
                 secureConfig       = @{ type = 'secureObject' }
@@ -114,13 +121,18 @@ output configuredParameters object = {
         @{ workflowName = 'avm.template.module.publish' }
     ) {
         $workflow = $workflows[$workflowName]
-        $deployment = $workflow.jobs.job_module_deploy_validation
+        $caller = $workflow.jobs.job_module_deploy_validation
+        $deployment = $deploymentWorkflow.jobs.job_module_deploy_validation
         $step = $deployment.steps | Where-Object { $_.uses -eq './.github/actions/templates/avm-validateModuleDeployment' }
 
+        $caller.uses | Should -Be './.github/workflows/avm.template.module.deployment.yml'
+        $caller.secrets | Should -Be 'inherit'
+        $caller.with.workflowInput | Should -Be '${{ inputs.workflowInput }}'
         $deployment.environment | Should -Be 'avm-validation'
         $step.with.githubVariables | Should -Be '${{ toJSON(vars) }}'
         $step.with.githubSecrets | Should -Be '${{ toJSON(secrets) }}'
         $workflow.env.CI_KEY_VAULT_NAME | Should -Be '${{ vars.CI_KEY_VAULT_NAME }}'
+        $deploymentWorkflow.env.CI_KEY_VAULT_NAME | Should -Be '${{ vars.CI_KEY_VAULT_NAME }}'
         @($workflow.env.Keys) | Should -Not -Contain 'AVM_CI_SECRETS'
         @($deployment.env.Keys) | Should -Not -Contain 'AVM_CI_SECRETS'
     }
@@ -129,9 +141,9 @@ output configuredParameters object = {
         $action.inputs.githubVariables.default | Should -Be '{}'
         $action.inputs.githubSecrets.default | Should -Be '{}'
         $stepsWithSecrets = @($action.runs.steps | Where-Object { $_.env -and $_.env.ContainsKey('AVM_CI_SECRETS') })
-        $stepsWithSecrets.Count | Should -Be 2
+        $stepsWithSecrets.Count | Should -Be 1
         foreach ($step in $stepsWithSecrets) {
-            $step.name | Should -BeIn @('Validate template file', 'Deploy template file')
+            $step.name | Should -Be 'Deploy template file'
             $step.env.AVM_CI_VARIABLES | Should -Be '${{ inputs.githubVariables }}'
             $step.env.AVM_CI_SECRETS | Should -Be '${{ inputs.githubSecrets }}'
             $step.with.inlineScript | Should -Not -Match '\$\{\{\s*inputs\.github(Secrets|Variables)'
@@ -149,10 +161,10 @@ output configuredParameters object = {
         $messages | Should -Match 'GitHub Actions secrets or variables'
     }
 
-    It 'Passes <format> parameters to <stepName> without modifying the template or logging values' -ForEach @(
-        @{ stepName = 'Validate template file'; commandName = 'Test-TemplateDeployment'; format = 'JSON' }
+    It 'Passes <format> parameters to <commandName> without modifying the template or logging values' -ForEach @(
+        @{ stepName = 'Deploy template file'; commandName = 'Test-TemplateDeployment'; format = 'JSON' }
         @{ stepName = 'Deploy template file'; commandName = 'New-TemplateDeployment'; format = 'JSON' }
-        @{ stepName = 'Validate template file'; commandName = 'Test-TemplateDeployment'; format = 'Bicep' }
+        @{ stepName = 'Deploy template file'; commandName = 'Test-TemplateDeployment'; format = 'Bicep' }
         @{ stepName = 'Deploy template file'; commandName = 'New-TemplateDeployment'; format = 'Bicep' }
     ) {
         $path = $format -eq 'Bicep' ? $bicepPath : $templatePath
@@ -173,8 +185,8 @@ output configuredParameters object = {
         Get-Content -Path $path -Raw | Should -BeExactly $before
     }
 
-    It 'Stops <stepName> when Bicep compilation fails' -ForEach @(
-        @{ stepName = 'Validate template file'; commandName = 'Test-TemplateDeployment' }
+    It 'Stops <commandName> when Bicep compilation fails' -ForEach @(
+        @{ stepName = 'Deploy template file'; commandName = 'Test-TemplateDeployment' }
         @{ stepName = 'Deploy template file'; commandName = 'New-TemplateDeployment' }
     ) {
         Mock bicep { $global:LASTEXITCODE = 1; return '{"parameters":{}}' }

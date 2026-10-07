@@ -1,7 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
   "moduleDisplayName": "Azure Synapse Analytics Workspace - Administrator",
-  "moduleDescription": "This module deploys Synapse Workspaces Administrators.",
-  "telemetryIdPrefix": "46d3xbcp.res.synapse-workspace-administrator",
+  "moduleDescription": "AVM Child Module for Azure Synapse Analytics Workspace - Administrator",
+  "telemetryIdPrefix": "46d3xbcp.res.f81aaa3",
+  "alternativeTelemetryIdPrefixes": ["46d3xbcp.res.synapse-workspace-administrator"],
   "canonicalType": "Microsoft.Synapse/workspaces/administrators"
 }
